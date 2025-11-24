@@ -1,8 +1,11 @@
 import { gql } from "@apollo/client";
 
-export const GET_MESSAGES = gql`
-  query GetMessages {
-    messages {
+export const GET_THREADS = gql`
+  query GetThreads {
+    messages(
+      where: { parent: null }
+      orderBy: { createdAt: desc }
+    ) {
       id
       content
       createdAt
