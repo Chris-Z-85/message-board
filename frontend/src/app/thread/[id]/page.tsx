@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { useQuery } from "@apollo/client/react";
 import { GET_THREAD_WITH_REPLIES } from "@/lib/graphql/queries";
 import { GetThreadWithRepliesData } from "@/lib/graphql/types";
+import { ReplyForm } from "@/components/ReplyForm";
 
 export default function ThreadPage() {
   const params = useParams<{ id: string }>();
@@ -45,6 +46,11 @@ export default function ThreadPage() {
           ))}
         </ul>
       )}
+
+      <div className="mt-6">
+        <h3>Add a Reply</h3>
+        <ReplyForm threadId={params.id} />
+      </div>
     </div>
   );
 }

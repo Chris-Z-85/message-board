@@ -56,3 +56,33 @@ export const CREATE_THREAD = gql`
     }
   }
 `;
+
+export const CREATE_REPLY = gql`
+  mutation CreateReply(
+    $content: String!
+    $authorId: ID!
+    $threadId: ID!
+  ) {
+    createMessage(
+      data: {
+        content: $content
+        author: { connect: { id: $authorId } }
+        parent: { connect: { id: $threadId } }
+        rootThread: { connect: { id: $threadId } }
+      }
+    ) {
+      id
+      content
+      createdAt
+      author {
+        displayName
+      }
+      parent {
+        id
+      }
+      rootThread {
+        id
+      }
+    }
+  }
+`;
