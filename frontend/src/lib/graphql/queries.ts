@@ -5,6 +5,10 @@ export const GET_MESSAGES = gql`
     messages {
       id
       content
+      createdAt
+      author {
+        displayName
+      }
     }
   }
 `;

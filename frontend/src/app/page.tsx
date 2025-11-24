@@ -7,6 +7,10 @@ import { GET_MESSAGES } from "@/lib/graphql/queries";
 interface Message {
   id: string;
   content: string;
+  createdAt: string;
+  author?: {
+    displayName?: string | null;
+  } | null;
 }
 
 interface GetMessagesData {
@@ -21,14 +25,19 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main>
-        <h1>Messages</h1>
-
-        {data?.messages?.length === 0 && <p>No messages yet.</p>}
-
-        <ul>
+      <main className="max-w-2xl mx-auto p-4 space-y-4">
+        <h1 className="text-2xl font-semibold mb-4">Threads</h1>
+        {loading && <p>Loading…</p>}
+        {error && <p>Something went wrong.</p>}
+        <ul className="space-y-3">
           {data?.messages?.map((msg) => (
-            <li key={msg.id}>{msg.content}</li>
+            <li key={msg.id} className="border rounded p-3">
+              <div className="text-sm text-gray-500">
+                {msg.author?.displayName ?? "Anonymous"} ·{" "}
+                {new Date(msg.createdAt).toLocaleString()}
+              </div>
+              <p className="mt-1">{msg.content}</p>
+            </li>
           ))}
         </ul>
       </main>
