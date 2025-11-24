@@ -3,23 +3,7 @@
 import { useParams } from "next/navigation";
 import { useQuery } from "@apollo/client/react";
 import { GET_THREAD_WITH_REPLIES } from "@/lib/graphql/queries";
-
-interface Message {
-  id: string;
-  content: string;
-  createdAt: string;
-  author?: {
-    displayName?: string | null;
-  } | null;
-  parent?: {
-    id: string;
-  } | null;
-}
-
-interface GetThreadWithRepliesData {
-  thread: Message | null;
-  replies: Message[];
-}
+import { GetThreadWithRepliesData } from "@/lib/graphql/types";
 
 export default function ThreadPage() {
   const params = useParams<{ id: string }>();
@@ -35,6 +19,7 @@ export default function ThreadPage() {
   if (!data?.thread) return <p>Thread not found</p>;
 
   const thread = data.thread;
+  // Filter out the thread itself from replies (in case it appears in the replies array)
   const replies = data.replies.filter((m) => m.id !== thread.id);
 
   return (
@@ -46,14 +31,20 @@ export default function ThreadPage() {
       </article>
 
       <h2>Replies</h2>
-      <ul>
-        {replies.map((reply) => (
-          <li key={reply.id}>
-            <p>{reply.content}</p>
-            <small>{reply.author?.displayName ?? "Anonymous"}</small>
-          </li>
-        ))}
-      </ul>
+      {replies.length === 0 ? (
+        <p className="text-gray-500 mt-4">
+          No replies yet. Be the first to reply!
+        </p>
+      ) : (
+        <ul>
+          {replies.map((reply) => (
+            <li key={reply.id}>
+              <p>{reply.content}</p>
+              <small>{reply.author?.displayName ?? "Anonymous"}</small>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

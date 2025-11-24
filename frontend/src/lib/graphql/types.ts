@@ -1,0 +1,25 @@
+export interface Message {
+  id: string;
+  content: string;
+  createdAt: string;
+  parent?: {
+    id: string;
+  } | null;
+  author?: {
+    displayName?: string | null;
+  } | null;
+}
+
+export interface GetThreadsData {
+  messages: Message[];
+}
+
+export interface GetThreadWithRepliesData {
+  thread: Message | null;
+  replies: Message[];
+}
+
+export interface CreateThreadData {
+  createMessage: Message;
+}
+

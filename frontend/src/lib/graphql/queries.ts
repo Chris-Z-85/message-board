@@ -43,3 +43,16 @@ export const GET_THREAD_WITH_REPLIES = gql`
     }
   }
 `;
+
+export const CREATE_THREAD = gql`
+  mutation CreateThread($content: String!) {
+    createMessage(data: { content: $content }) {
+      id
+      content
+      createdAt
+      author {
+        displayName
+      }
+    }
+  }
+`;
