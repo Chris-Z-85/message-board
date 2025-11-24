@@ -22,5 +22,14 @@ export default config({
     provider: 'sqlite',
     url: 'file:./keystone.db',
   },
+
+  server: {
+    port: 3000,
+    cors: {
+      origin: ['http://localhost:3001'],
+      credentials: true,
+    },
+  },
+
   lists,
 })
