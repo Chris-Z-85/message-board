@@ -15,3 +15,31 @@ export const GET_THREADS = gql`
     }
   }
 `;
+
+export const GET_THREAD_WITH_REPLIES = gql`
+  query GetThreadWithReplies($id: ID!) {
+    thread: message(where: { id: $id }) {
+      id
+      content
+      createdAt
+      author {
+        displayName
+      }
+    }
+
+    replies: messages(
+      where: { rootThread: { id: { equals: $id } } }
+      orderBy: { createdAt: asc }
+    ) {
+      id
+      content
+      createdAt
+      author {
+        displayName
+      }
+      parent {
+        id
+      }
+    }
+  }
+`;
