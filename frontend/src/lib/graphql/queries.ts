@@ -45,8 +45,13 @@ export const GET_THREAD_WITH_REPLIES = gql`
 `;
 
 export const CREATE_THREAD = gql`
-  mutation CreateThread($content: String!) {
-    createMessage(data: { content: $content }) {
+  mutation CreateThread($content: String!, $authorId: ID!) {
+    createMessage(
+      data: {
+        content: $content
+        author: { connect: { id: $authorId } }
+      }
+    ) {
       id
       content
       createdAt
@@ -83,6 +88,34 @@ export const CREATE_REPLY = gql`
       rootThread {
         id
       }
+    }
+  }
+`;
+
+export const FIND_SESSION_BY_IDENTIFIER = gql`
+  query FindSessionByIdentifier($sessionIdentifier: String!) {
+    userSessions(
+      where: { sessionIdentifier: { equals: $sessionIdentifier } }
+      take: 1
+    ) {
+      id
+      displayName
+      sessionIdentifier
+    }
+  }
+`;
+
+export const CREATE_USER_SESSION = gql`
+  mutation CreateUserSession($sessionIdentifier: String!, $displayName: String) {
+    createUserSession(
+      data: {
+        sessionIdentifier: $sessionIdentifier
+        displayName: $displayName
+      }
+    ) {
+      id
+      displayName
+      sessionIdentifier
     }
   }
 `;

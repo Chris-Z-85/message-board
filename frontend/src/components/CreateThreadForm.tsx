@@ -1,9 +1,10 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { useMutation } from "@apollo/client/react";
+import { useMutation, useApolloClient } from "@apollo/client/react";
 import { CREATE_THREAD, GET_THREADS } from "@/lib/graphql/queries";
 import { CreateThreadData } from "@/lib/graphql/types";
+import { ensureUserSession } from "@/lib/session";
 
 type CreateThreadFormProps = {
   onCreated?: () => void; // e.g. refetch thread list after submit
@@ -11,6 +12,7 @@ type CreateThreadFormProps = {
 
 export function CreateThreadForm({ onCreated }: CreateThreadFormProps) {
   const [content, setContent] = useState("");
+  const client = useApolloClient();
   const [createThread, { loading, error }] = useMutation<CreateThreadData>(
     CREATE_THREAD,
     {
@@ -28,8 +30,14 @@ export function CreateThreadForm({ onCreated }: CreateThreadFormProps) {
     if (!content.trim()) return;
 
     try {
+      // Get or create user session to get authorId
+      const session = await ensureUserSession(client);
+
       await createThread({
-        variables: { content: content.trim() },
+        variables: {
+          content: content.trim(),
+          authorId: session.id,
+        },
       });
     } catch (err) {
       // Error is already handled by the error state from useMutation

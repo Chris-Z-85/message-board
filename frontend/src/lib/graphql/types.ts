@@ -23,3 +23,17 @@ export interface CreateThreadData {
   createMessage: Message;
 }
 
+export interface UserSession {
+  id: string;
+  displayName?: string | null;
+  sessionIdentifier: string;
+}
+
+export interface FindSessionByIdentifierData {
+  userSessions: UserSession[];
+}
+
+export interface CreateUserSessionData {
+  createUserSession: UserSession;
+}
+
