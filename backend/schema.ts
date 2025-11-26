@@ -7,10 +7,19 @@
 import { list } from '@keystone-6/core'
 import { allowAll } from '@keystone-6/core/access'
 import { text, relationship, timestamp } from '@keystone-6/core/fields'
+import { pubsub } from './pubsub';
 
 // Note: Types are generated when you run `keystone dev` or `keystone build`
 //   Once generated, you can import: import { type Lists } from '.keystone/types'
 type Lists = any // Temporary type until .keystone/types is generated
+
+function getThreadIdFromMessage(item: any): string | null {
+  if (item.rootThreadId) return String(item.rootThreadId);
+  if (item.rootThread?.id) return String(item.rootThread.id);
+  if (item.id) return String(item.id);
+
+  return null;
+}
 
 export const lists = {
   UserSession: list({
@@ -89,7 +98,6 @@ export const lists = {
         },
       }),
 
-      // If null -> top-level message (not a reply)
       parent: relationship({
         label: 'Parent message',
         ref: 'Message.replies',
@@ -99,7 +107,6 @@ export const lists = {
         },
       }),
 
-      // Replies to this message (self-referential relationship)
       replies: relationship({
         label: 'Replies',
         ref: 'Message.parent',
@@ -111,7 +118,6 @@ export const lists = {
         },
       }),
 
-      // Always points to the top-level message of the thread
       rootThread: relationship({
         label: 'Root thread',
         ref: 'Message',
@@ -127,6 +133,24 @@ export const lists = {
       listView: {
         initialColumns: ['content', 'author', 'createdAt'],
         initialSort: { field: 'createdAt', direction: 'DESC' },
+      },
+    },
+
+    hooks: {
+      async afterOperation({ operation, item }) {
+        if (operation !== 'create') return;
+
+        const threadId = getThreadIdFromMessage(item as any);
+
+        if (!threadId) {
+          return;
+        }
+
+        const channel = `MESSAGE_ADDED_${threadId}`;
+
+        await (pubsub as any).publish(channel, {
+          messageAdded: item,
+        });
       },
     },
   }),

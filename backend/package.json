@@ -8,9 +8,16 @@
     "build": "keystone build"
   },
   "dependencies": {
+    "@graphql-tools/schema": "^10.0.29",
     "@keystone-6/auth": "^8.0.0",
     "@keystone-6/core": "^6.0.0",
     "@keystone-6/fields-document": "^9.0.0",
-    "typescript": "^5.5.0"
+    "graphql-subscriptions": "^3.0.0",
+    "graphql-ws": "^6.0.6",
+    "typescript": "^5.5.0",
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.18.1"
   }
 }
