@@ -7,6 +7,7 @@ import { GET_THREAD_WITH_REPLIES } from "@/lib/graphql/queries";
 import { ensureUserSession } from "@/lib/session";
 
 export function ReplyForm({ threadId }: { threadId: string }) {
+  const MAX_REPLY_CHARACTERS = 300;
   const [content, setContent] = useState("");
   const client = useApolloClient();
   const [createReply, { loading, error }] = useMutation(CREATE_REPLY, {
@@ -40,24 +41,40 @@ export function ReplyForm({ threadId }: { threadId: string }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-2">
+    <form
+      onSubmit={handleSubmit}
+      className="rounded-2xl border border-zinc-200 bg-white/80 p-4 shadow-sm backdrop-blur-sm dark:border-zinc-800 dark:bg-zinc-900/60"
+    >
+      <label className="text-sm font-semibold text-zinc-600 dark:text-zinc-300">
+        Continue the conversation
+      </label>
+
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder="Write a reply…"
-        className="border rounded p-2"
+        maxLength={MAX_REPLY_CHARACTERS}
+        className="mt-2 w-full resize-none rounded-xl border border-zinc-200 bg-white/90 p-3 text-sm text-zinc-800 shadow-inner outline-none transition focus:border-blue-500 focus:ring focus:ring-blue-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+        rows={4}
       />
-      {error && (
-        <p className="text-sm text-red-500">
-          Error posting reply: {error.message}
-        </p>
-      )}
+
+      <div className="m-2 flex items-center justify-between text-xs text-zinc-500">
+        <span>
+          {content.length}/{MAX_REPLY_CHARACTERS} characters
+        </span>
+        {error && (
+          <span className="font-semibold text-red-500">
+            Error: {error.message}
+          </span>
+        )}
+      </div>
+
       <button
         type="submit"
         disabled={loading || !content.trim()}
-        className="self-start px-3 py-1 rounded bg-blue-600 text-white disabled:opacity-50"
+        className="rounded-full bg-linear-to-r from-blue-600 to-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-xl shadow-blue-600/40 transition hover:translate-y-0.5 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-blue-300 disabled:opacity-70"
       >
-        {loading ? "Posting…" : "Post reply"}
+        {loading ? "Sending…" : "Reply"}
       </button>
     </form>
   );
