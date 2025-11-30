@@ -2,6 +2,8 @@
 
 This repository implements a real‑time message board where users can start new threads and post replies without refreshing the page. The system is split into a KeystoneJS GraphQL backend (`backend/`) and a Next.js + Apollo Client frontend (`frontend/`), connected via GraphQL queries, mutations, and subscriptions.
 
+![Message Board Screenshot](./message-board.png)
+
 ## Requirements Coverage
 
 - **Messaging system** – Users can create top‑level threads and reply to existing threads. Both actions persist to the database and update the UI immediately.
